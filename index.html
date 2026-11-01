@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday, Mom! 🌻</title>
+  <meta name="description" content="A special birthday card filled with sunshine, love, and warm wishes — from your favorite child 😉" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Happy Birthday, Mom! 🌻💛" />
+  <meta property="og:description" content="Tap to open your birthday card — from your favorite child 😉" />
+  <meta property="og:image" content="https://jessiejaymz810s.github.io/mom-birthday-card/mom_birthday_card.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Happy Birthday, Mom! 🌻💛" />
+  <meta name="twitter:description" content="Tap to open your birthday card — from your favorite child 😉" />
+  <meta name="twitter:image" content="https://jessiejaymz810s.github.io/mom-birthday-card/mom_birthday_card.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sunflower: #F59E0B;
+      --sunflower-light: #FEF3C7;
+      --sunflower-bright: #FFB703;
+      --coral: #FF6B6B;
+      --coral-deep: #E11D48;
+      --coral-soft: #FFE4E6;
+      --teal: #0D9488;
+      --teal-dark: #115E59;
+      --teal-light: #CCFBF1;
+      --cream: #FFFDF9;
+      --paper: #FFF9F0;
+      --ink: #1F2937;
+      --ink-muted: #4B5563;
+      --gold: #D97706;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 15% 20%, rgba(255, 183, 3, 0.22), transparent 42%),
+                  radial-gradient(circle at 85% 25%, rgba(255, 107, 107, 0.22), transparent 45%),
+                  radial-gradient(circle at 50% 85%, rgba(13, 148, 136, 0.20), transparent 50%),
+                  linear-gradient(135deg, #FFFDF7 0%, #FFF5EB 50%, #F0FDFA 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem 5rem;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    /* Ambient floating petals */
+    .ambient-decor {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .floating-dot {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.35;
+      animation: floatSlow 14s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatSlow {
+      0% { transform: translateY(0px) rotate(0deg) scale(1); }
+      100% { transform: translateY(-30px) rotate(20deg) scale(1.08); }
+    }
+
+    /* Top bar controls */
+    .top-controls {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      padding: 0.55rem 1rem;
+      border-radius: 999px;
+      box-shadow: 0 8px 30px rgba(17, 94, 89, 0.08), 0 0 0 1px rgba(13, 148, 136, 0.14);
+    }
+
+    body.recipient-mode .sender-only {
+      display: none !important;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid rgba(13, 148, 136, 0.2);
+      background: white;
+      color: var(--teal-dark);
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--teal-light);
+      border-color: var(--teal);
+      transform: translateY(-1px);
+    }
+
+    .btn.active, .btn-primary {
+      background: linear-gradient(135deg, var(--coral), var(--sunflower));
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+    }
+
+    .btn.active:hover, .btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+
+    .divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(0, 0, 0, 0.1);
+      margin: 0 0.2rem;
+    }
+
+    /* Card Stage */
+    .stage {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 940px;
+      perspective: 2200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .book-card {
+      width: 100%;
+      max-width: 900px;
+      min-height: 600px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      border-radius: 24px;
+      background: var(--paper);
+      box-shadow:
+        0 30px 70px -15px rgba(17, 94, 89, 0.22),
+        0 12px 28px -8px rgba(245, 158, 11, 0.15),
+        0 0 0 1px rgba(245, 158, 11, 0.22);
+      overflow: hidden;
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Spine shadow down the middle */
+    .book-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 32px;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg,
+        rgba(0,0,0,0.0) 0%,
+        rgba(17, 94, 89, 0.07) 45%,
+        rgba(17, 94, 89, 0.12) 50%,
+        rgba(17, 94, 89, 0.05) 55%,
+        rgba(0,0,0,0.0) 100%);
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Decorative border inside both panels */
+    .card-panel {
+      padding: 2.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .left-panel {
+      background: linear-gradient(160deg, #FFFDF9 0%, #FFF7ED 55%, #F0FDFA 100%);
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-right: 1px solid rgba(245, 158, 11, 0.18);
+    }
+
+    .art-frame {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      border-radius: 18px;
+      padding: 10px;
+      background: linear-gradient(135deg, var(--sunflower-bright), var(--coral), var(--teal));
+      box-shadow: 0 16px 36px rgba(255, 107, 107, 0.2);
+      transition: transform 0.35s ease;
+    }
+
+    .art-frame:hover {
+      transform: scale(1.015) rotate(-0.5deg);
+    }
+
+    .art-inner {
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--cream);
+      position: relative;
+      aspect-ratio: 4 / 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .art-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Interactive candle / wish widget below the art */
+    .wish-box {
+      margin-top: 1.25rem;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 0.7rem 1.2rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.12);
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+
+    .wish-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(245, 158, 11, 0.22);
+      border-color: var(--coral);
+    }
+
+    .candle-flame {
+      font-size: 1.25rem;
+      display: inline-block;
+      animation: flicker 1.2s ease-in-out infinite alternate;
+    }
+
+    .wish-box.blown .candle-flame {
+      animation: none;
+      transform: scale(1.15);
+    }
+
+    @keyframes flicker {
+      0% { transform: scale(1) rotate(-3deg); filter: drop-shadow(0 0 6px #FFB703); }
+      100% { transform: scale(1.14) rotate(3deg); filter: drop-shadow(0 0 12px #FF6B6B); }
+    }
+
+    .wish-text {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--teal-dark);
+    }
+
+    /* Right Panel: Message */
+    .right-panel {
+      background: var(--cream);
+      padding: 2.75rem 2.5rem;
+      position: relative;
+    }
+
+    .corner-flourish {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      pointer-events: none;
+      opacity: 0.75;
+    }
+    .corner-tl { top: 14px; left: 14px; }
+    .corner-tr { top: 14px; right: 14px; transform: scaleX(-1); }
+    .corner-bl { bottom: 14px; left: 14px; transform: scaleY(-1); }
+    .corner-br { bottom: 14px; right: 14px; transform: scale(-1, -1); }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      align-self: flex-start;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--teal);
+      background: var(--teal-light);
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+
+    .card-heading {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1.12;
+      color: var(--teal-dark);
+      margin-bottom: 1.25rem;
+    }
+
+    .card-heading span {
+      background: linear-gradient(120deg, var(--coral-deep), var(--sunflower));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-style: italic;
+    }
+
+    .message-body {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 1.32rem;
+      line-height: 1.65;
+      color: var(--ink);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1rem;
+      padding: 0.5rem 0;
+      border-radius: 12px;
+      transition: box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .message-body[contenteditable="true"]:focus {
+      outline: none;
+      background: rgba(254, 243, 199, 0.35);
+      box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.35);
+      padding: 0.5rem 0.75rem;
+    }
+
+    .signature-block {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px dashed rgba(13, 148, 136, 0.25);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .signature-text {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--coral-deep);
+    }
+
+    .signature-text[contenteditable="true"]:focus {
+      outline: none;
+      background: rgba(254, 243, 199, 0.4);
+      border-radius: 6px;
+      padding: 0 0.4rem;
+    }
+
+    .edit-hint {
+      font-size: 0.75rem;
+      color: var(--ink-muted);
+      opacity: 0.75;
+    }
+
+    /* Envelope Intro Overlay */
+    .envelope-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      background: radial-gradient(circle at 30% 25%, #FFF7ED 0%, #FFEDD5 45%, #CCFBF1 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      transition: opacity 0.65s ease, visibility 0.65s ease;
+    }
+
+    .envelope-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .envelope-card {
+      width: 100%;
+      max-width: 440px;
+      background: linear-gradient(145deg, #FFFDF9, #FFF3E0);
+      border-radius: 28px;
+      padding: 2.5rem 2rem;
+      text-align: center;
+      box-shadow:
+        0 25px 60px rgba(17, 94, 89, 0.18),
+        0 0 0 2px rgba(245, 158, 11, 0.35);
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
+    }
+
+    .envelope-card:hover {
+      transform: translateY(-6px) scale(1.015);
+      box-shadow:
+        0 32px 70px rgba(255, 107, 107, 0.25),
+        0 0 0 3px var(--sunflower);
+    }
+
+    .wax-seal {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      margin: 0 auto 1.4rem;
+      background: radial-gradient(circle at 30% 30%, #FF8585, var(--coral-deep));
+      box-shadow:
+        0 10px 25px rgba(225, 29, 72, 0.38),
+        inset 0 2px 6px rgba(255, 255, 255, 0.45),
+        inset 0 -3px 8px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #FFF;
+      border: 3px dashed rgba(254, 243, 199, 0.6);
+      animation: pulseSeal 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseSeal {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+
+    .envelope-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--teal-dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .envelope-sub {
+      color: var(--ink-muted);
+      font-size: 0.98rem;
+      margin-bottom: 1.6rem;
+    }
+
+    .open-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, var(--sunflower-bright), var(--coral));
+      color: white;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.85rem 1.8rem;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(255, 107, 107, 0.35);
+    }
+
+    @media (max-width: 780px) {
+      .book-card {
+        grid-template-columns: 1fr;
+      }
+      .book-card::after {
+        display: none;
+      }
+      .left-panel {
+        border-right: none;
+        border-bottom: 1px solid rgba(245, 158, 11, 0.2);
+      }
+      .card-heading {
+        font-size: 2.1rem;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .top-controls, .envelope-overlay, #confetti-canvas, .wish-box, .edit-hint {
+        display: none !important;
+      }
+      .book-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Sealed Envelope Intro -->
+  <div class="envelope-overlay" id="envelope-overlay" onclick="openCard()">
+    <div class="envelope-card">
+      <div class="wax-seal" aria-hidden="true">🌻</div>
+      <div class="badge-pill" style="margin: 0 auto 0.75rem;">Special Delivery</div>
+      <h1 class="envelope-title">For Mom, With Love</h1>
+      <p class="envelope-sub">A bright birthday note filled with sunshine, gratitude, and warm wishes.</p>
+      <button class="open-btn" type="button">✨ Open Birthday Card</button>
+    </div>
+  </div>
+
+  <!-- Interactive Toolbar -->
+  <div class="top-controls" role="toolbar" aria-label="Card Controls">
+    <div class="sender-only" style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
+      <span style="font-size:0.78rem; font-weight:600; color:var(--ink-muted); padding:0 0.3rem;">Message Style:</span>
+      <button class="btn active" id="msg-btn-0" onclick="selectMessage(0)">🌻 Warm &amp; Heartfelt</button>
+      <button class="btn" id="msg-btn-1" onclick="selectMessage(1)">💛 Grateful &amp; Loving</button>
+      <button class="btn" id="msg-btn-2" onclick="selectMessage(2)">✨ Short &amp; Sweet</button>
+      <div class="divider"></div>
+    </div>
+    <button class="btn" onclick="burstConfetti()">🎉 Celebrate</button>
+    <button class="btn" id="music-btn" onclick="toggleMelody()">🎵 Play Birthday Tune</button>
+    <button class="btn sender-only" onclick="window.print()">🖨️ Print Card</button>
+    <button class="btn sender-only" id="preview-btn" onclick="toggleRecipientMode()">👁️ Mom's View</button>
+  </div>
+
+  <!-- Main Open Card -->
+  <main class="stage">
+    <article class="book-card">
+      <!-- Left Page: Custom Artwork & Interactive Wish -->
+      <section class="card-panel left-panel">
+        <div class="art-frame">
+          <div class="art-inner">
+            <img
+              src="mom_birthday_card.png"
+              alt="Vibrant watercolor bouquet of sunflowers, coral peonies, and teal foliage reading Happy Birthday, Mom"
+              onerror="this.style.display='none'; document.getElementById('svg-fallback').style.display='flex';"
+            />
+            <!-- Rich SVG fallback if image hasn't loaded -->
+            <div id="svg-fallback" style="display:none; width:100%; height:100%; flex-direction:column; align-items:center; justify-content:center; padding:2rem; background:linear-gradient(160deg,#FFFBEB,#FFF1F2,#F0FDFA); text-align:center;">
+              <div style="font-size:4.2rem; margin-bottom:0.8rem;">🌻🌸🌿</div>
+              <div style="font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:700; color:#115E59;">Happy Birthday, Mom</div>
+              <div style="font-size:0.9rem; color:#0D9488; margin-top:0.4rem;">Sunflower • Coral • Teal</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wish-box" id="wish-box" onclick="makeAWish()" title="Click to blow out the birthday candle!">
+          <span class="candle-flame" id="candle-icon">🕯️</span>
+          <span class="wish-text" id="wish-text">Tap the candle to make a birthday wish!</span>
+        </div>
+      </section>
+
+      <!-- Right Page: Personalizable Heartfelt Note -->
+      <section class="card-panel right-panel">
+        <!-- Corner botanical SVG flourishes -->
+        <svg class="corner-flourish corner-tl" viewBox="0 0 64 64" fill="none">
+          <path d="M6 58C6 29.281 29.281 6 58 6" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 5"/>
+          <circle cx="18" cy="18" r="5" fill="#F59E0B" opacity="0.8"/>
+          <circle cx="32" cy="11" r="3.5" fill="#FF6B6B" opacity="0.8"/>
+          <circle cx="11" cy="32" r="3.5" fill="#0D9488" opacity="0.8"/>
+        </svg>
+        <svg class="corner-flourish corner-tr" viewBox="0 0 64 64" fill="none">
+          <path d="M6 58C6 29.281 29.281 6 58 6" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 5"/>
+          <circle cx="18" cy="18" r="5" fill="#F59E0B" opacity="0.8"/>
+          <circle cx="32" cy="11" r="3.5" fill="#FF6B6B" opacity="0.8"/>
+          <circle cx="11" cy="32" r="3.5" fill="#0D9488" opacity="0.8"/>
+        </svg>
+        <svg class="corner-flourish corner-bl" viewBox="0 0 64 64" fill="none">
+          <path d="M6 58C6 29.281 29.281 6 58 6" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 5"/>
+          <circle cx="18" cy="18" r="5" fill="#F59E0B" opacity="0.8"/>
+        </svg>
+        <svg class="corner-flourish corner-br" viewBox="0 0 64 64" fill="none">
+          <path d="M6 58C6 29.281 29.281 6 58 6" stroke="#0D9488" stroke-width="2" stroke-linecap="round" stroke-dasharray="3 5"/>
+          <circle cx="18" cy="18" r="5" fill="#F59E0B" opacity="0.8"/>
+        </svg>
+
+        <div>
+          <div class="badge-pill">🌻 Celebrating You Today</div>
+          <h2 class="card-heading">Happy Birthday, <span>Mom!</span></h2>
+        </div>
+
+        <div class="message-body" id="message-body" contenteditable="true" spellcheck="false">
+          <p>Dearest Mom,</p>
+          <p>Thank you for being the warmth at the center of our family—the person whose kindness, strength, and laughter make every room brighter.</p>
+          <p>Through every season of life, your love and encouragement have meant more to me than words can ever fully capture. I hope today brings you as much joy, peace, and sunshine as you bring into the lives of everyone around you.</p>
+          <p>Wishing you a year ahead filled with vibrant health, happy memories, and all your favorite things.</p>
+        </div>
+
+        <div class="signature-block">
+          <div>
+            <div style="font-size: 0.85rem; color: var(--ink-muted); margin-bottom: 0.15rem;">With all my love,</div>
+            <div class="signature-text" contenteditable="true" spellcheck="false">Your favorite child 😉💛</div>
+          </div>
+          <span class="edit-hint sender-only">✏️ Click any text to personalize</span>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <script>
+    const MESSAGES = [
+      `
+        <p>Dearest Mom,</p>
+        <p>Thank you for being the warmth at the center of our family—the person whose kindness, strength, and laughter make every room brighter.</p>
+        <p>Through every season of life, your love and encouragement have meant more to me than words can ever fully capture. I hope today brings you as much joy, peace, and sunshine as you bring into the lives of everyone around you.</p>
+        <p>Wishing you a year ahead filled with vibrant health, happy memories, and all your favorite things.</p>
+      `,
+      `
+        <p>Dear Mom,</p>
+        <p>On your birthday, I just want to pause and say thank you—for every thoughtful gesture, every wise piece of advice, and every moment you stood in my corner.</p>
+        <p>You have a rare gift for making people feel truly cared for and understood. I feel so lucky to call you my mom, today and every single day.</p>
+        <p>May your day be overflowing with sunshine, laughter, and the warmth you so freely give to everyone else!</p>
+      `,
+      `
+        <p>Happy Birthday to the best Mom in the world!</p>
+        <p>You bring so much color, warmth, and happiness into our lives every single day. Thank you for everything you do and for simply being wonderful you.</p>
+        <p>Here’s to celebrating you today and wishing you the brightest, happiest year ahead!</p>
+      `
+    ];
+
+    function selectMessage(idx) {
+      document.getElementById('message-body').innerHTML = MESSAGES[idx];
+      for (let i = 0; i < 3; i++) {
+        document.getElementById('msg-btn-' + i).classList.toggle('active', i === idx);
+      }
+    }
+
+    function openCard() {
+      document.getElementById('envelope-overlay').classList.add('hidden');
+      burstConfetti(110);
+      playSparkleChime();
+    }
+
+    function makeAWish() {
+      const box = document.getElementById('wish-box');
+      const icon = document.getElementById('candle-icon');
+      const text = document.getElementById('wish-text');
+      box.classList.add('blown');
+      icon.textContent = '✨🌻✨';
+      text.textContent = 'Wish made! May all your wishes come true, Mom!';
+      burstConfetti(90);
+      playSparkleChime();
+    }
+
+    function toggleRecipientMode() {
+      const isRecipient = document.body.classList.toggle('recipient-mode');
+      const editableEls = document.querySelectorAll('[contenteditable]');
+      editableEls.forEach(el => el.setAttribute('contenteditable', !isRecipient));
+    }
+
+    if (window.location.hash === '#mom' || new URLSearchParams(window.location.search).get('view') === 'mom') {
+      toggleRecipientMode();
+    }
+
+    // Confetti engine in Sunflower Yellow, Coral, and Teal
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animId = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    const PALETTE = ['#FFB703', '#F59E0B', '#FF6B6B', '#F43F5E', '#0D9488', '#14B8A6', '#FDE68A'];
+
+    function burstConfetti(count = 80) {
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.random() * Math.PI) + Math.PI;
+        const speed = 4 + Math.random() * 9;
+        particles.push({
+          x: canvas.width * (0.25 + Math.random() * 0.5),
+          y: canvas.height * 0.45,
+          vx: Math.cos(angle) * speed * (Math.random() > 0.5 ? 1 : -1),
+          vy: -Math.abs(Math.sin(angle) * speed) - 3,
+          size: 6 + Math.random() * 7,
+          color: PALETTE[Math.floor(Math.random() * PALETTE.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 10,
+          shape: Math.random() > 0.35 ? 'rect' : 'circle',
+          alpha: 1
+        });
+      }
+      if (!animId) animateConfetti();
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.22; // gravity
+        p.vx *= 0.99;
+        p.rotation += p.vRot;
+        if (p.y > canvas.height - 80) p.alpha -= 0.025;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.alpha);
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        if (p.shape === 'circle') {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillRect(-p.size / 2, -p.size / 3, p.size, p.size * 0.66);
+        }
+        ctx.restore();
+      });
+
+      particles = particles.filter(p => p.alpha > 0 && p.y < canvas.height + 40);
+      if (particles.length > 0) {
+        animId = requestAnimationFrame(animateConfetti);
+      } else {
+        animId = null;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    // Gentle Web Audio Music Box ("Happy Birthday" melody)
+    let audioCtx = null;
+    let isPlaying = false;
+    let melodyTimeouts = [];
+
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playNote(freq, startTime, duration) {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, startTime);
+
+      gain.gain.setValueAtTime(0.001, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.16, startTime + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    }
+
+    function playSparkleChime() {
+      try {
+        initAudio();
+        const now = audioCtx.currentTime;
+        [523.25, 659.25, 783.99, 1046.5].forEach((f, idx) => {
+          playNote(f, now + idx * 0.08, 0.55);
+        });
+      } catch (e) {}
+    }
+
+    function toggleMelody() {
+      initAudio();
+      const btn = document.getElementById('music-btn');
+      if (isPlaying) {
+        melodyTimeouts.forEach(t => clearTimeout(t));
+        melodyTimeouts = [];
+        isPlaying = false;
+        btn.textContent = '🎵 Play Birthday Tune';
+        btn.classList.remove('active');
+        return;
+      }
+
+      isPlaying = true;
+      btn.textContent = '⏹️ Stop Tune';
+      btn.classList.add('active');
+
+      // Happy Birthday notes (frequency in Hz, duration in beats)
+      const notes = [
+        [261.63, 0.75], [261.63, 0.25], [293.66, 1], [261.63, 1], [349.23, 1], [329.63, 2],
+        [261.63, 0.75], [261.63, 0.25], [293.66, 1], [261.63, 1], [392.00, 1], [349.23, 2],
+        [261.63, 0.75], [261.63, 0.25], [523.25, 1], [440.00, 1], [349.23, 1], [329.63, 1], [293.66, 2],
+        [466.16, 0.75], [466.16, 0.25], [440.00, 1], [349.23, 1], [392.00, 1], [349.23, 2.5]
+      ];
+
+      const beat = 0.42;
+      let offset = 0;
+      const start = audioCtx.currentTime + 0.05;
+
+      notes.forEach(([freq, beats]) => {
+        playNote(freq, start + offset, beats * beat * 1.15);
+        offset += beats * beat;
+      });
+
+      const endTimeout = setTimeout(() => {
+        isPlaying = false;
+        btn.textContent = '🎵 Play Birthday Tune';
+        btn.classList.remove('active');
+      }, offset * 1000 + 200);
+      melodyTimeouts.push(endTimeout);
+    }
+  </script>
+</body>
+</html>
